@@ -14,14 +14,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install SnowSQL (via .deb)
+    - name: Install SnowSQL (latest stable)
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip wget
-        wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.deb
-        sudo dpkg -i snowsql-1.2.21-linux_x86_64.deb
+        wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/install
+        bash install
+        echo 'export PATH="$HOME/.snowsql:$PATH"' >> $GITHUB_ENV
 
-    - name: Verify SnowSQL installation
+    - name: Verify SnowSQL version
       run: snowsql -v
 
     - name: Run Deploy Script
