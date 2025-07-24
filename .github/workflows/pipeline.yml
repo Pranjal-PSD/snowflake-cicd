@@ -1,4 +1,4 @@
-name: Deploy to Snowflake
+name: Snowflake CI/CD Pipeline
 
 on:
   push:
@@ -14,12 +14,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install SnowSQL
+    - name: Install SnowSQL (via .deb)
       run: |
         sudo apt-get update
-        sudo apt-get install -y unzip
-        wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.bash
-        bash snowsql-1.2.21-linux_x86_64.bash
+        sudo apt-get install -y unzip wget
+        wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.deb
+        sudo dpkg -i snowsql-1.2.21-linux_x86_64.deb
+
+    - name: Verify SnowSQL installation
+      run: snowsql -v
 
     - name: Run Deploy Script
       env:
