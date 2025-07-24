@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e  # Stop on first error
+
 echo "🚀 Starting deployment to Snowflake..."
 
 # Use GitHub Secrets or fallback defaults
@@ -10,6 +12,12 @@ ROLE="${SNOWFLAKE_ROLE:-ACCOUNTADMIN}"
 WAREHOUSE="${SNOWFLAKE_WAREHOUSE:-PRANJAL_COMPUTE_WH}"
 DATABASE="${SNOWFLAKE_DATABASE:-PRANJAL}"
 SCHEMA="${SNOWFLAKE_SCHEMA:-PUBLIC}"
+
+# Confirm SnowSQL is available
+if ! command -v snowsql &> /dev/null; then
+  echo "❌ snowsql not found in PATH. Aborting."
+  exit 1
+fi
 
 # Execute SQL files
 for file in dev/*.sql; do

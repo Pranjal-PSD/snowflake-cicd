@@ -14,7 +14,10 @@ jobs:
 
       - name: 🧊 Install SnowSQL CLI
         run: |
-          pip install snowflake-cli-labs
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.bash
+          bash snowsql-1.2.21-linux_x86_64.bash
+          echo "$HOME/.snowsql" >> $GITHUB_PATH
+          export PATH="$HOME/.snowsql:$PATH"
 
       - name: 🚀 Run deploy.sh
         env:
@@ -26,6 +29,6 @@ jobs:
           SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
           SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
         run: |
+          export PATH="$HOME/.snowsql:$PATH"
           chmod +x cicd/deploy.sh
           bash cicd/deploy.sh
-
