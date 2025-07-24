@@ -1,1 +1,8 @@
-# Pipeline config 
+    - name: Run deploy.sh
+      env:
+        SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+        SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+        SNOWSQL_PASSWORD: ${{ secrets.SNOWSQL_PASSWORD }}
+      run: |
+        export PATH=$PATH:/home/runner/.snowsql
+        bash cicd/deploy.sh
