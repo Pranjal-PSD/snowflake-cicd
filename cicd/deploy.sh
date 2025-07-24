@@ -12,14 +12,16 @@ jobs:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🧊 Install SnowSQL CLI
+      - name: 🧪 Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: 3.8
+
+      - name: 🧊 Install SnowSQL via Conda
         run: |
-          sudo apt update
-          sudo apt install -y unzip
-          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.bash
-          bash snowsql-1.2.21-linux_x86_64.bash -y
-          echo "$HOME/.snowsql" >> $GITHUB_PATH
-        shell: bash
+          conda install -y -c snowflake snowsql
+          echo "$(conda info --base)/bin" >> $GITHUB_PATH
 
       - name: 🚀 Run deploy.sh
         env:
@@ -31,6 +33,5 @@ jobs:
           SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
           SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
         run: |
-          export PATH="$HOME/.snowsql:$PATH"
           chmod +x cicd/deploy.sh
           bash cicd/deploy.sh
