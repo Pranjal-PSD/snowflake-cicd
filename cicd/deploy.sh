@@ -1,37 +1,19 @@
-name: Deploy to Snowflake (Dev)
+#!/bin/bash
+set -e  # Exit if any command fails
 
-on:
-  push:
-    branches: [ main ]
+echo "📤 Deploying SQL scripts to Snowflake..."
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# Loop over all .sql files in the current directory
+for file in dev/*.sql; do
+  echo "🔄 Executing: $file"
+  snowsql -a "$SNOWFLAKE_ACCOUNT" \
+          -u "$SNOWFLAKE_USER" \
+          -p "$SNOWFLAKE_PASSWORD" \
+          -r "$SNOWFLAKE_ROLE" \
+          -w "$SNOWFLAKE_WAREHOUSE" \
+          -d "$SNOWFLAKE_DATABASE" \
+          -s "$SNOWFLAKE_SCHEMA" \
+          -f "$file"
+done
 
-    steps:
-      - name: ⬇️ Checkout Code
-        uses: actions/checkout@v3
-
-      - name: 🧪 Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-update-conda: true
-          python-version: 3.8
-
-      - name: 🧊 Install SnowSQL via Conda
-        run: |
-          conda install -y -c snowflake snowsql
-          echo "$(conda info --base)/bin" >> $GITHUB_PATH
-
-      - name: 🚀 Run deploy.sh
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-        run: |
-          chmod +x cicd/deploy.sh
-          bash cicd/deploy.sh
+echo "✅ Deployment complete."
