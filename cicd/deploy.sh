@@ -1,11 +1,10 @@
 #!/bin/bash
-set -e  # Exit if any command fails
+set -e
 
-echo "📤 Deploying SQL scripts to Snowflake..."
+echo "🚀 Starting Snowflake deployment..."
 
-# Loop over all .sql files in the current directory
 for file in dev/*.sql; do
-  echo "🔄 Executing: $file"
+  echo "📄 Executing $file"
   snowsql -a "$SNOWFLAKE_ACCOUNT" \
           -u "$SNOWFLAKE_USER" \
           -p "$SNOWFLAKE_PASSWORD" \
