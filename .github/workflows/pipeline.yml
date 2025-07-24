@@ -9,28 +9,20 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/snowflakedb/snowsql:latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install SnowSQL from tar.gz
-      run: |
-        mkdir -p $HOME/snowsql
-        wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.27-linux_x86_64.tar.gz -O snowsql.tar.gz
-        tar -xzf snowsql.tar.gz -C $HOME/snowsql
-        echo "$HOME/snowsql/snowsql-1.2.27-linux_x86_64" >> $GITHUB_PATH
-
-    - name: Verify SnowSQL
-      run: snowsql -v
-
-    - name: Run Deploy Script
-      env:
-        SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-        SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-        SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-        SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-        SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-        SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-        SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-      run: ./cicd/deploy.sh
+      - name: Run Deploy Script
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+        run: ./cicd/deploy.sh
