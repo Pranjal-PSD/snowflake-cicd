@@ -1,0 +1,27 @@
+name: Snowflake CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install SnowSQL
+      run: |
+        wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.bash
+        bash snowsql-1.2.21-linux_x86_64.bash
+
+    - name: Run deploy.sh
+      env:
+        SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+        SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+        SNOWSQL_PASSWORD: ${{ secrets.SNOWSQL_PASSWORD }}
+      run: |
+        export PATH=$PATH:/home/runner/.snowsql
+        bash cicd/deploy.sh
