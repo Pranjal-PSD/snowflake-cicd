@@ -15,11 +15,11 @@ jobs:
       - name: 🧊 Install SnowSQL CLI
         run: |
           sudo apt update
-          sudo apt install -y wget unzip
-          wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.bash
+          sudo apt install -y unzip
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.21-linux_x86_64.bash
           bash snowsql-1.2.21-linux_x86_64.bash -y
           echo "$HOME/.snowsql" >> $GITHUB_PATH
-          export PATH="$HOME/.snowsql:$PATH"
+        shell: bash
 
       - name: 🚀 Run deploy.sh
         env:
